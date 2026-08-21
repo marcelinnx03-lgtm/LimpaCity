@@ -1,42 +1,37 @@
 function App() {
   return (
     <main className="grid min-h-screen place-items-center bg-[#f5f7f2] p-4 text-[#173e35] sm:p-8">
-      <section className="w-full max-w-4xl overflow-hidden rounded-[2rem] bg-white shadow-[0_24px_70px_rgba(22,63,54,0.16)]">
+      <section className="w-full max-w-3xl overflow-hidden rounded-[2rem] bg-white shadow-[0_24px_70px_rgba(22,63,54,0.16)]">
         <header className="flex items-center gap-4 bg-[#67a347] px-6 py-5 text-white">
           <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-white text-3xl shadow-sm" aria-label="Símbolo de reciclagem">♻</div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e5f6d8]">LimpaCity</p>
-            <h1 className="mt-1 text-2xl font-bold leading-tight">Quem somos</h1>
+            <h1 className="mt-1 text-2xl font-bold leading-tight">Local de origem</h1>
           </div>
         </header>
 
-        <div className="grid gap-8 px-6 py-8 sm:px-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div className="grid gap-8 px-6 py-8 sm:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <article>
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#528b38]">Nossa história</p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight">Uma cidade mais limpa começa com informação acessível.</h2>
-            <p className="mt-5 leading-7 text-[#526a61]">A LimpaCity nasceu quando seus responsáveis identificaram a dificuldade de encontrar informações claras sobre limpeza urbana, descarte correto e reciclagem.</p>
-            <p className="mt-4 leading-7 text-[#526a61]">O grupo levantou necessidades, consultou pessoas e definiu uma estrutura simples para aproximar cidadãos de soluções urbanas mais sustentáveis.</p>
-
-            <div className="mt-7 rounded-2xl bg-[#e8f5ef] p-5">
-              <h3 className="font-bold">Equipe responsável</h3>
-              <ul className="mt-3 grid gap-2 text-sm text-[#3f6256] sm:grid-cols-2">
-                <li>Marcelo — desenvolvimento</li>
-                <li>Maria Fernanda — conteúdo</li>
-                <li>Marcela — estrutura</li>
-                <li>Lívia — design e usabilidade</li>
-              </ul>
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#528b38]">Brasil · Minas Gerais</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight">Nascida em Santa Rita do Sapucaí.</h2>
+            <p className="mt-5 leading-7 text-[#526a61]">A LimpaCity é uma plataforma digital desenvolvida no Brasil para aproximar pessoas de informações e serviços de limpeza urbana.</p>
+            <p className="mt-4 leading-7 text-[#526a61]">Sua atuação é online e pode ser acessada de qualquer lugar. Sua origem está em Santa Rita do Sapucaí, um polo de inovação tecnológica no sul de Minas Gerais.</p>
+            <div className="mt-7 flex items-center gap-3 rounded-2xl bg-[#e8f5ef] p-4">
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-white text-xl">📍</span>
+              <p className="text-sm font-semibold text-[#3f6256]">Conexões locais para um impacto que pode chegar mais longe.</p>
             </div>
           </article>
 
-          <aside className="relative min-h-96 overflow-hidden rounded-[2rem] bg-[#d6b169] p-7 text-[#183d35]">
-            <div className="absolute -right-12 -top-10 h-52 w-52 rounded-full bg-[#f7e8be]/70" />
-            <div className="absolute -bottom-14 -left-12 h-48 w-48 rounded-full border-[28px] border-[#86c86a]/80" />
-            <div className="relative flex min-h-80 flex-col justify-between rounded-3xl bg-white/35 p-6 backdrop-blur-[1px]">
-              <div className="text-6xl" aria-hidden="true">🏙️</div>
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.15em]">Soluções urbanas e cidadania ativa</p>
-                <p className="mt-3 text-2xl font-bold leading-tight">Informação, participação e cuidado com o lugar onde vivemos.</p>
-              </div>
+          <aside className="relative min-h-96 overflow-hidden rounded-[2rem] bg-[#dce1df] p-5" aria-label="Mapa ilustrativo de Santa Rita do Sapucaí">
+            <div className="absolute -left-10 top-20 h-10 w-[130%] rotate-[-26deg] bg-white/85" />
+            <div className="absolute -left-12 top-48 h-9 w-[130%] rotate-[31deg] bg-white/85" />
+            <div className="absolute left-28 -top-12 h-[130%] w-8 rotate-[20deg] bg-white/85" />
+            <div className="absolute right-24 -top-10 h-[130%] w-7 rotate-[-18deg] bg-white/85" />
+            <div className="absolute bottom-24 left-6 h-7 w-[115%] rotate-[-52deg] bg-white/85" />
+            <div className="absolute left-[43%] top-[47%] grid h-16 w-16 place-items-center rounded-full bg-[#173e35] text-3xl text-white shadow-xl">●</div>
+            <div className="absolute bottom-6 left-6 rounded-xl bg-white/90 px-4 py-3 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#528b38]">Local de origem</p>
+              <p className="mt-1 font-bold">Santa Rita do Sapucaí, MG</p>
             </div>
           </aside>
         </div>
