@@ -1,0 +1,1 @@
+-- Reserved initial migration. Add immutable schema migrations as V2__description.sql and later.
