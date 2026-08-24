@@ -2,9 +2,7 @@ import { useState } from 'react'
 
 type Screen = 'Início' | 'Login' | 'Outra forma' | 'Código por e-mail' | 'Quem somos' | 'Localização' | 'Denúncias' | 'Formulário' | 'Observação' | 'Pontuação' | 'Agradecimento'
 
-const screens: Screen[] = ['Início', 'Login', 'Outra forma', 'Código por e-mail', 'Quem somos', 'Localização', 'Denúncias', 'Formulário', 'Observação', 'Pontuação', 'Agradecimento']
 const reportTypes = ['Lixo acumulado em via pública', 'Descarte irregular de entulho', 'Problemas ambientais', 'Falta de coleta de lixo', 'Foco de pragas', 'Outros']
-const protectedScreens: Screen[] = ['Denúncias', 'Formulário', 'Observação']
 
 function App() {
   const [screen, setScreen] = useState<Screen>('Início')
@@ -12,6 +10,7 @@ function App() {
   const [files, setFiles] = useState<File[]>([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [pendingScreen, setPendingScreen] = useState<Screen>('Denúncias')
+  const [notice, setNotice] = useState('')
   const go = (next: Screen) => () => setScreen(next)
   const requestAccess = (next: Screen) => () => {
     if (isAuthenticated) {
@@ -22,24 +21,33 @@ function App() {
     setPendingScreen(next)
     setScreen('Login')
   }
+  const startLogin = () => {
+    setPendingScreen('Início')
+    setScreen('Login')
+  }
   const completeLogin = () => {
     setIsAuthenticated(true)
+    setNotice('Login realizado com sucesso. Você já pode continuar.')
     setScreen(pendingScreen)
+  }
+  const signOut = () => {
+    setIsAuthenticated(false)
+    setNotice('Você saiu da sua conta.')
+    setScreen('Início')
   }
 
   return (
     <main className="min-h-screen bg-[#f5f7f2] p-4 text-[#173e35] sm:p-8">
-      <nav aria-label="Navegação de telas" className="mx-auto mb-5 flex max-w-5xl flex-wrap justify-center gap-2">
-        {screens.map((item) => <button className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${screen === item ? 'bg-[#477f32] text-white' : 'bg-white text-[#477f32] hover:bg-[#e8f5ef]'}`} key={item} onClick={protectedScreens.includes(item) ? requestAccess(item) : go(item)} type="button">{item}</button>)}
-      </nav>
-
       <section className="mx-auto w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white shadow-[0_24px_70px_rgba(22,63,54,0.16)]">
         <header className="flex items-center gap-4 bg-[#99d66f] px-6 py-5">
           <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-white text-3xl shadow-sm" aria-label="Símbolo de reciclagem">♻</div>
           <div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#356b2a]">LimpaCity</p><h1 className="mt-1 text-2xl font-bold leading-tight">{screen}</h1></div>
+          <div className="ml-auto flex items-center gap-3"><button className="rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-[#356b2a]" onClick={go('Início')} type="button">Início</button>{isAuthenticated ? <button className="rounded-full border border-[#356b2a] px-4 py-2 text-sm font-semibold text-[#356b2a]" onClick={signOut} type="button">Sair</button> : <button className="rounded-full border border-[#356b2a] px-4 py-2 text-sm font-semibold text-[#356b2a]" onClick={startLogin} type="button">Entrar</button>}</div>
         </header>
 
-        {screen === 'Início' && <div className="grid gap-8 p-7 sm:p-10 lg:grid-cols-2"><div><p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#528b38]">Seja bem-vindo</p><h2 className="mt-2 text-4xl font-bold">Uma cidade mais limpa começa com você.</h2><p className="mt-4 leading-7 text-[#526a61]">Informação, participação e reciclagem para transformar o cuidado com a cidade.</p><div className="mt-8 grid gap-3 sm:grid-cols-3"><button className="rounded-2xl bg-[#eae2f4] p-5 text-left font-bold" onClick={requestAccess('Denúncias')} type="button">⚑<br />Denúncias</button><button className="rounded-2xl bg-[#f5efd9] p-5 text-left font-bold" onClick={go('Quem somos')} type="button">◌<br />Quem somos</button><button className="rounded-2xl bg-[#e0f1eb] p-5 text-left font-bold" onClick={go('Localização')} type="button">⌖<br />Localização</button></div></div><aside className="rounded-[2rem] bg-[#bfe9f4] p-8"><div className="text-7xl">🌱</div><h3 className="mt-16 text-3xl font-bold">Juntos pelo planeta.</h3><p className="mt-3 text-[#28594e]">Pequenas ações geram grandes mudanças.</p></aside></div>}
+        {notice && <div className="mx-7 mt-6 flex items-center justify-between gap-4 rounded-xl bg-[#e8f5ef] px-4 py-3 text-sm font-semibold text-[#3f6256] sm:mx-10"><span>{notice}</span><button aria-label="Fechar aviso" className="text-lg" onClick={() => setNotice('')} type="button">×</button></div>}
+
+        {screen === 'Início' && <div className="grid gap-8 p-7 sm:p-10 lg:grid-cols-2"><div><p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#528b38]">Seja bem-vindo</p><h2 className="mt-2 text-4xl font-bold">Uma cidade mais limpa começa com você.</h2><p className="mt-4 leading-7 text-[#526a61]">Informação, participação e reciclagem para transformar o cuidado com a cidade.</p><div className="mt-8 grid gap-3 sm:grid-cols-2"><button className="rounded-2xl bg-[#eae2f4] p-5 text-left font-bold" onClick={requestAccess('Denúncias')} type="button">⚑<br />Denúncias</button><button className="rounded-2xl bg-[#f5efd9] p-5 text-left font-bold" onClick={go('Quem somos')} type="button">◌<br />Quem somos</button><button className="rounded-2xl bg-[#e0f1eb] p-5 text-left font-bold" onClick={go('Localização')} type="button">⌖<br />Localização</button><button className="rounded-2xl bg-[#e8f5ef] p-5 text-left font-bold" onClick={go('Pontuação')} type="button">♻<br />Central de pontuação</button></div></div><aside className="rounded-[2rem] bg-[#bfe9f4] p-8"><div className="text-7xl">🌱</div><h3 className="mt-16 text-3xl font-bold">Juntos pelo planeta.</h3><p className="mt-3 text-[#28594e]">Pequenas ações geram grandes mudanças.</p></aside></div>}
 
         {screen === 'Login' && <div className="mx-auto max-w-2xl p-7 sm:p-10"><h2 className="text-3xl font-bold">Criar conta ou login</h2><p className="mt-3 text-[#526a61]">Para acessar denúncias, entre ou crie sua conta.</p><div className="mt-8 grid gap-3 sm:grid-cols-2"><button className="rounded-xl bg-[#5b9e3e] px-4 py-3 font-semibold text-white" onClick={completeLogin} type="button">Criar conta</button><button className="rounded-xl border border-[#cbd9d3] px-4 py-3 font-semibold" onClick={completeLogin} type="button">Entrar com Google</button><button className="rounded-xl border border-[#cbd9d3] px-4 py-3 font-semibold" onClick={completeLogin} type="button">Entrar com Facebook</button><button className="rounded-xl border border-[#cbd9d3] px-4 py-3 font-semibold" onClick={go('Código por e-mail')} type="button">Entrar com e-mail</button></div><button className="mt-5 w-full rounded-xl bg-[#e8f5ef] px-4 py-3 font-semibold text-[#477f32]" onClick={go('Outra forma')} type="button">Entrar de outra forma</button></div>}
 
@@ -51,7 +59,7 @@ function App() {
 
         {screen === 'Denúncias' && <div className="mx-auto max-w-2xl p-7 sm:p-10"><h2 className="text-3xl font-bold">Denuncie problemas da sua cidade</h2><p className="mt-4 leading-7 text-[#526a61]">Encontrou lixo irregular, descarte inadequado ou outro problema urbano? Escolha uma categoria para continuar.</p><fieldset className="mt-7 grid gap-3"><legend className="font-semibold">Tipos de denúncia</legend>{reportTypes.map((item) => <label className={`flex cursor-pointer items-center gap-3 rounded-xl border p-4 ${reportType === item ? 'border-[#5b9e3e] bg-[#e8f5ef]' : 'border-[#d6e3dd]'}`} key={item}><input checked={reportType === item} name="report" onChange={() => setReportType(item)} type="radio" />{item}</label>)}</fieldset><button className="mt-6 rounded-xl bg-[#5b9e3e] px-7 py-3 font-semibold text-white" onClick={go('Formulário')} type="button">Próximo →</button></div>}
 
-        {screen === 'Formulário' && <form className="mx-auto max-w-3xl space-y-5 p-7 sm:p-10" onSubmit={(event) => { event.preventDefault(); setScreen('Observação') }}><p className="rounded-xl bg-[#e8f5ef] p-4 text-sm">Você pode fazer uma denúncia anônima.</p><div className="grid gap-5 sm:grid-cols-2"><label className="font-semibold">Nome (opcional)<input className="mt-2 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" type="text" /></label><label className="font-semibold">E-mail (opcional)<input className="mt-2 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" type="email" /></label></div><label className="block font-semibold">Descrição do problema<textarea className="mt-2 min-h-32 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" required /></label><label className="block font-semibold">Endereço ou localização<input className="mt-2 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" required /></label><div className="grid gap-5 sm:grid-cols-2"><label className="font-semibold">Data<input className="mt-2 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" type="date" /></label><label className="font-semibold">Hora<input className="mt-2 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" type="time" /></label></div><label className="block cursor-pointer rounded-2xl border-2 border-dashed border-[#b8ccc3] p-6 text-center font-semibold">📷 Adicionar fotos ou vídeos<input accept="image/*,video/*" className="sr-only" multiple onChange={(event) => setFiles(Array.from(event.target.files ?? []))} type="file" />{files.length > 0 && <small className="mt-2 block text-[#477f32]">{files.length} arquivo(s) selecionado(s)</small>}</label><button className="rounded-xl bg-[#5b9e3e] px-7 py-3 font-semibold text-white" type="submit">Enviar denúncia</button></form>}
+        {screen === 'Formulário' && <form className="mx-auto max-w-3xl space-y-5 p-7 sm:p-10" onSubmit={(event) => { event.preventDefault(); setNotice('Denúncia enviada com sucesso. Obrigado por participar!'); setScreen('Observação') }}><p className="rounded-xl bg-[#e8f5ef] p-4 text-sm">Você pode fazer uma denúncia anônima.</p><div className="grid gap-5 sm:grid-cols-2"><label className="font-semibold">Nome (opcional)<input className="mt-2 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" type="text" /></label><label className="font-semibold">E-mail (opcional)<input className="mt-2 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" type="email" /></label></div><label className="block font-semibold">Descrição do problema<textarea className="mt-2 min-h-32 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" required /></label><label className="block font-semibold">Endereço ou localização<input className="mt-2 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" required /></label><div className="grid gap-5 sm:grid-cols-2"><label className="font-semibold">Data<input className="mt-2 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" type="date" /></label><label className="font-semibold">Hora<input className="mt-2 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal" type="time" /></label></div><label className="block cursor-pointer rounded-2xl border-2 border-dashed border-[#b8ccc3] p-6 text-center font-semibold">📷 Adicionar fotos ou vídeos<input accept="image/*,video/*" className="sr-only" multiple onChange={(event) => setFiles(Array.from(event.target.files ?? []))} type="file" />{files.length > 0 && <small className="mt-2 block text-[#477f32]">{files.length} arquivo(s) selecionado(s)</small>}</label><button className="rounded-xl bg-[#5b9e3e] px-7 py-3 font-semibold text-white" type="submit">Enviar denúncia</button></form>}
 
         {screen === 'Observação' && <div className="grid gap-8 p-7 sm:p-10 lg:grid-cols-2"><article><p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#528b38]">Depois do envio</p><h2 className="mt-2 text-3xl font-bold">Sua denúncia pode ajudar a transformar a cidade.</h2><ul className="mt-6 grid gap-3"><li className="rounded-xl bg-[#e8f5ef] p-4">✉️ Receber atualizações por e-mail</li><li className="rounded-xl bg-[#e8f5ef] p-4">🔎 Acompanhar o status da denúncia</li><li className="rounded-xl bg-[#e8f5ef] p-4">📍 Ver relatos próximos no mapa</li></ul></article><aside className="rounded-[2rem] bg-[#e0ede2] p-8"><div className="text-7xl">✓</div><h3 className="mt-20 text-3xl font-bold">Juntos por uma cidade melhor. 💛</h3></aside></div>}
 
@@ -59,7 +67,7 @@ function App() {
 
         {screen === 'Agradecimento' && <div className="p-7 sm:p-10"><section className="relative min-h-80 overflow-hidden rounded-[2rem] bg-[#1aa7d7] p-8 text-white"><div className="absolute -left-16 -top-16 h-64 w-64 rounded-full border-[46px] border-white/20" /><div className="relative flex min-h-64 flex-col justify-end rounded-3xl bg-[#0379b5]/45 p-7"><div className="mb-auto text-7xl">🧹</div><h2 className="text-4xl font-bold">Uma cidade limpa beneficia a todos!</h2></div></section><article className="mt-8 rounded-2xl bg-[#f4faef] p-6 text-lg leading-8 text-[#5b9e3e]"><h2 className="text-2xl font-bold text-[#477f32]">Muito obrigado!</h2><p className="mt-4">Agradecemos pela confiança e por utilizar o aplicativo LimpaCity. A participação de vocês é essencial para continuarmos melhorando e fazendo a diferença.</p></article></div>}
 
-        <footer className="flex justify-end border-t border-[#e5eee9] bg-[#fbfdfb] px-6 py-5"><button className="rounded-xl bg-[#5b9e3e] px-6 py-3 font-semibold text-white" onClick={go('Início')} type="button">Concluir</button></footer>
+        <footer className="flex justify-end border-t border-[#e5eee9] bg-[#fbfdfb] px-6 py-5"><button className="rounded-xl bg-[#5b9e3e] px-6 py-3 font-semibold text-white" onClick={screen === 'Observação' ? go('Pontuação') : screen === 'Pontuação' ? go('Agradecimento') : go('Início')} type="button">{screen === 'Observação' ? 'Ver pontuação' : screen === 'Pontuação' ? 'Continuar' : 'Concluir'}</button></footer>
       </section>
     </main>
   )
