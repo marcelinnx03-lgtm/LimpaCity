@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-type Screen = 'Início' | 'Login' | 'Outra forma' | 'Código por e-mail' | 'Quem somos' | 'Localização' | 'Denúncias' | 'Formulário' | 'Observação' | 'Pontuação' | 'Agradecimento' | 'Painel do dono' | 'Solucionar denúncia'
+type Screen = 'Início' | 'Login' | 'Outra forma' | 'Código por e-mail' | 'Quem somos' | 'Localização' | 'Denúncias' | 'Formulário' | 'Observação' | 'Pontuação' | 'Agradecimento' | 'Acesso do dono' | 'Painel do dono' | 'Solucionar denúncia'
 
 type ReportStatus = 'Recebida' | 'Em análise' | 'Resolvida'
 
@@ -34,6 +34,8 @@ function App() {
   const [reports, setReports] = useState<Report[]>(initialReports)
   const [selectedReportId, setSelectedReportId] = useState<number>(initialReports[0].id)
   const [solutionNote, setSolutionNote] = useState('')
+  const [ownerEmail, setOwnerEmail] = useState('')
+  const [isOwnerAuthenticated, setIsOwnerAuthenticated] = useState(false)
   const isValidAccount = loginProvider === 'Google'
     ? /^[^\s@]+@gmail\.com$/i.test(gmail.trim())
     : gmail.trim().length >= 3
@@ -77,6 +79,24 @@ function App() {
     setNotice('Você saiu da sua conta.')
     setScreen('Início')
   }
+  const requestOwnerAccess = () => {
+    if (isOwnerAuthenticated) {
+      setScreen('Painel do dono')
+      return
+    }
+
+    setScreen('Acesso do dono')
+  }
+  const completeOwnerAccess = () => {
+    if (!/^\S+@\S+\.\S+$/.test(ownerEmail.trim())) {
+      setNotice('Informe um e-mail válido do dono para continuar.')
+      return
+    }
+
+    setIsOwnerAuthenticated(true)
+    setNotice('Acesso do dono liberado nesta sessão.')
+    setScreen('Painel do dono')
+  }
   const openReport = (id: number) => {
     setSelectedReportId(id)
     setSolutionNote('')
@@ -94,7 +114,7 @@ function App() {
         <header className="flex items-center gap-4 bg-[#99d66f] px-6 py-5">
           <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-white text-3xl shadow-sm" aria-label="Símbolo de reciclagem">♻</div>
           <div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#356b2a]">LimpaCity</p><h1 className="mt-1 text-2xl font-bold leading-tight">{screen}</h1></div>
-          <div className="ml-auto flex flex-wrap items-center justify-end gap-2"><button className="rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-[#356b2a]" onClick={go('Início')} type="button">Início</button><button className="rounded-full border border-[#356b2a] px-4 py-2 text-sm font-semibold text-[#356b2a]" onClick={go('Painel do dono')} type="button">Painel do dono</button>{isAuthenticated ? <button className="rounded-full border border-[#356b2a] px-4 py-2 text-sm font-semibold text-[#356b2a]" onClick={signOut} type="button">Sair</button> : <button className="rounded-full border border-[#356b2a] px-4 py-2 text-sm font-semibold text-[#356b2a]" onClick={startLogin} type="button">Entrar</button>}</div>
+          <div className="ml-auto flex flex-wrap items-center justify-end gap-2"><button className="rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-[#356b2a]" onClick={go('Início')} type="button">Início</button><button className="rounded-full border border-[#356b2a] px-4 py-2 text-sm font-semibold text-[#356b2a]" onClick={requestOwnerAccess} type="button">Painel do dono</button>{isAuthenticated ? <button className="rounded-full border border-[#356b2a] px-4 py-2 text-sm font-semibold text-[#356b2a]" onClick={signOut} type="button">Sair</button> : <button className="rounded-full border border-[#356b2a] px-4 py-2 text-sm font-semibold text-[#356b2a]" onClick={startLogin} type="button">Entrar</button>}</div>
         </header>
 
         {notice && <div className="mx-7 mt-6 flex items-center justify-between gap-4 rounded-xl bg-[#e8f5ef] px-4 py-3 text-sm font-semibold text-[#3f6256] sm:mx-10"><span>{notice}</span><button aria-label="Fechar aviso" className="text-lg" onClick={() => setNotice('')} type="button">×</button></div>}
@@ -108,6 +128,8 @@ function App() {
         {screen === 'Quem somos' && <div className="grid gap-8 p-7 sm:p-10 lg:grid-cols-2"><article><p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#528b38]">Nossa história</p><h2 className="mt-2 text-3xl font-bold">Uma cidade mais limpa começa com informação acessível.</h2><p className="mt-5 leading-7 text-[#526a61]">A LimpaCity nasceu da necessidade de facilitar o acesso a informações sobre limpeza urbana e descarte correto.</p><p className="mt-4 leading-7 text-[#526a61]">Marcelo, Maria Fernanda, Marcela e Lívia uniram desenvolvimento, conteúdo, estrutura, design e usabilidade para criar essa iniciativa.</p></article><aside className="rounded-[2rem] bg-[#d6b169] p-8"><div className="text-7xl">🏙️</div><h3 className="mt-20 text-3xl font-bold">Soluções urbanas e cidadania ativa.</h3></aside></div>}
 
         {screen === 'Localização' && <div className="grid gap-8 p-7 sm:p-10 lg:grid-cols-2"><article><p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#528b38]">Brasil · Minas Gerais</p><h2 className="mt-2 text-3xl font-bold">Nascida em Santa Rita do Sapucaí.</h2><p className="mt-5 leading-7 text-[#526a61]">A plataforma atua online e pode ser acessada de qualquer lugar. Sua origem está em Santa Rita do Sapucaí, um polo de inovação tecnológica no sul de Minas Gerais.</p><a className="mt-7 inline-flex rounded-xl bg-[#5b9e3e] px-5 py-3 font-semibold text-white transition hover:bg-[#4c8634]" href="https://www.google.com/maps/search/?api=1&query=Santa+Rita+do+Sapucai+MG" rel="noreferrer" target="_blank">Abrir no Google Maps ↗</a></article><aside className="relative min-h-80 overflow-hidden rounded-[2rem] bg-[#dce1df]"><div className="absolute left-1/2 top-1/2 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[#173e35] text-3xl text-white">●</div><p className="absolute bottom-6 left-6 rounded-xl bg-white p-3 font-bold">📍 Santa Rita do Sapucaí, MG</p></aside></div>}
+
+        {screen === 'Acesso do dono' && <form className="mx-auto max-w-xl p-7 sm:p-10" onSubmit={(event) => { event.preventDefault(); completeOwnerAccess() }}><p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#528b38]">Área restrita</p><h2 className="mt-2 text-3xl font-bold">Acesso do dono</h2><p className="mt-3 leading-7 text-[#526a61]">Informe o e-mail do responsável para acessar o painel de denúncias.</p><label className="mt-7 block text-sm font-semibold" htmlFor="owner-email">E-mail do dono<input autoComplete="email" className="mt-2 w-full rounded-xl border border-[#bbcdc5] px-4 py-3 font-normal outline-none focus:border-[#5b9e3e] focus:ring-2 focus:ring-[#b9e1a6]" id="owner-email" onChange={(event) => setOwnerEmail(event.target.value)} placeholder="dono@exemplo.com" required type="email" value={ownerEmail} /></label><div className="mt-6 flex gap-3"><button className="flex-1 rounded-xl border border-[#b8ccc3] px-4 py-3 font-semibold" onClick={go('Início')} type="button">Voltar</button><button className="flex-1 rounded-xl bg-[#5b9e3e] px-4 py-3 font-semibold text-white" type="submit">Acessar painel</button></div><p className="mt-4 text-xs leading-5 text-[#71847d]">Validação demonstrativa local. Em produção, use autenticação e autorização no backend.</p></form>}
 
         {screen === 'Painel do dono' && <div className="p-7 sm:p-10"><div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#528b38]">Área administrativa</p><h2 className="mt-2 text-3xl font-bold">Denúncias recebidas</h2><p className="mt-2 text-[#526a61]">Acompanhe e encaminhe os relatos enviados pela comunidade.</p></div><div className="grid grid-cols-3 gap-2 text-center text-sm"><div className="rounded-xl bg-[#eae2f4] p-3"><strong>{reports.filter((report) => report.status === 'Recebida').length}</strong><br />Novas</div><div className="rounded-xl bg-[#f5efd9] p-3"><strong>{reports.filter((report) => report.status === 'Em análise').length}</strong><br />Em análise</div><div className="rounded-xl bg-[#e0f1eb] p-3"><strong>{reports.filter((report) => report.status === 'Resolvida').length}</strong><br />Resolvidas</div></div></div><div className="mt-8 grid gap-4">{reports.map((report) => <article className="rounded-2xl border border-[#d7e5dc] p-5" key={report.id}><div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><p className="text-sm font-semibold text-[#528b38]">#{report.id} · {report.type}</p><h3 className="mt-1 font-bold">{report.address}</h3><p className="mt-2 text-sm text-[#526a61]">{report.description}</p><p className="mt-2 text-xs text-[#71847d]">Recebida em {report.date}</p></div><div className="flex items-center gap-3"><span className={`rounded-full px-3 py-1 text-xs font-semibold ${report.status === 'Resolvida' ? 'bg-[#e0f1eb] text-[#287263]' : report.status === 'Em análise' ? 'bg-[#f5efd9] text-[#7b5f10]' : 'bg-[#eae2f4] text-[#765f9d]'}`}>{report.status}</span><button className="rounded-xl bg-[#5b9e3e] px-4 py-2 text-sm font-semibold text-white" onClick={() => openReport(report.id)} type="button">Atender</button></div></div></article>)}</div></div>}
 
