@@ -24,3 +24,6 @@ management:
 app:
   cors:
     allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:5173}
+  owner:
+    email: ${OWNER_EMAIL:}
+    password: ${OWNER_PASSWORD:}
